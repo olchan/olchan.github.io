@@ -16,7 +16,7 @@ timezone:
 
 title: Chan's Log # the main title
 
-tagline: Hi! I'm studying indutrial Engineering # it will display as the sub-title
+tagline: Hi! # it will display as the sub-title
 
 description: >- # used by seo meta and the atom feed
   A minimal, responsive and feature-rich Jekyll theme for technical writing.
@@ -26,7 +26,7 @@ description: >- # used by seo meta and the atom feed
 url: ""
 
 github:
-  username: github_username # change to your github username
+  username: olchan # change to your github username
 
 twitter:
   username: twitter_username # change to your twitter username
