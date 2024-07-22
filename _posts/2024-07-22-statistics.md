@@ -126,4 +126,4 @@
 
 
 > ### **변수의 척도에 따른 분석 방법**
-<img src = "assets/images/analysis graph.png">
+![image](https://github.com/olchan/olchan.github.io/issues/2#issue-2421732714)
