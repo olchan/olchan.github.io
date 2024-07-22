@@ -66,7 +66,7 @@ df.describe()
 -  변수들 간의 선형 관계를 정확히 표현할 수 있으며, 동시에 각 변수의 분산도 대각선 원소로 얻을 수 있습니다.
 - 공분산 계산식 : $Cov(X,Y)=E[(X−E[X])(Y−E[Y])]$
   
-- 공분산 행렬 : $\Sigma = \frac{1}{n-1} \mathbf{X}_\text{centered}^T \mathbf{X}_\text{centered}$
+- 공분산 행렬 : $Sigma = \frac{1}{n-1} \mathbf{X}_\text{centered}^T \mathbf{X}_\text{centered}$
   
 - $\Sigma_{ij} = \frac{1}{n-1} \sum_{k=1}^{n} (X_{ki} - \bar{X}_i)(X_{kj} - \bar{X}_j)$
 
