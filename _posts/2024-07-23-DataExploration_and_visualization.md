@@ -1,5 +1,5 @@
 > - EDA(Exploratory Data Analysis 탐색적 데이터 분석)와 데이터 시각화의 목적은 조금 다르다.
-- DEA 단계에서 데이터 파악을 효율적으로 하기 위해 시각화를 하기도 하지만, 데이터 시각화의 궁극적인 목적은 분석 결과를 커뮤니케이션 하기 위함이다.
+- EDA 단계에서 데이터 파악을 효율적으로 하기 위해 시각화를 하기도 하지만, 데이터 시각화의 궁극적인 목적은 분석 결과를 커뮤니케이션 하기 위함이다.
 
 - **시각화의 유형**
 1. 시간의 흐름에 따른 변화 -> 시간 시각화
@@ -72,9 +72,13 @@ df.describe()
 
 =>> **상관계수가 높다 = X1이 움직일 때 X2가 많이 움직인다는 뜻이 아닌, X2를 예상할 수 있는 정확도, 즉 설명력이 높다는 것,**
 
+![222](https://github.com/user-attachments/assets/f1861112-f434-4c9b-9d69-a21137e70092)
+
 - 상관계수의 제곱 = 결정계수 = 총 변동 중에서 회귀선에 의해 설명되는 변동이 차지하는 비율
 - 해당 독립 변수가 종속 변수의 변동을 설명하는 정도
 - 두 변수의 선형 관계만을 측정할 수 있기에 2차 방정식 그래프와 같은 관계의 데이터는 상관계수가 매우 낮게 측정된다.
+
+![333](https://github.com/user-attachments/assets/42140659-589c-4a3c-bc32-d92039fdcf9b)
 
 **클러스터맵의 해석**
 - 변수 간의 유사성 : 클러스터맵에서는 상관성이 높은 변수들이 클러스터링을 통해 가까이 위치합니다. 예를 들어, 변수 A와 변수 B가 상관성이 높다면, 클러스터맵에서는 A와 B가 서로 인접한 위치에 배치됩니다.
@@ -82,6 +86,8 @@ df.describe()
 
 > **요약**
 - sns.clustermap을 사용하면 단순히 히트맵의 시각적 가독성을 높이는 것뿐만 아니라, 데이터 내 변수 간의 상관관계를 기반으로 한 실제 클러스터링을 통해 유사한 변수들을 그룹화하고, 이들을 인접한 위치에 배치하여 더욱 명확하게 상관관계를 파악할 수 있게 됩니다.
+
+![444](https://github.com/user-attachments/assets/eacee72e-fa4c-42d3-b4d4-808a81e05709)
 
 ## **3. 시간 시각화**
 
@@ -106,6 +112,8 @@ df_line.plot(x='Date2', y='Month', color='#FF7F50', linewidth = "1", ax=ax)
 # 날짜별로 매출액 편차가 커서 전체적인 추이를 보기위해서 rolling으로 이동 평균선을 만들어준다.
 ```
 
+![output_15_1](https://github.com/user-attachments/assets/9c4bc799-a917-4d9b-a566-c4e878d1b637)
+
 ## 4. 비교 시각화
 
 > - 그룹 별 요소가 많은 경우, **히트맵 차트**를 사용하여 각 그룹(행)을 기준으로 요소들(열)의 크기 비교 가능 & 각 요소를 기준으로 그룹들의 크기 비교 가능
@@ -127,6 +135,8 @@ fig,axes = plt.subplots()
 plt.figure(figsize=(16,8)) # 그래프 크기 조정
 parallel_coordinates(df3,'Tm',ax=axes, colormap='winter',linewidth = "0.5")
 ```
+
+![output_17_1](https://github.com/user-attachments/assets/ed561184-9c3e-4274-92f2-b35470d8e078)
 
 ## 5. 분포 시각화
 - 데이터가 처음 주어졌을 때, 변수들이 어떤 요소로 어느 정도의 비율로 구성되어 있는 지를 확인하는 단계
@@ -155,6 +165,7 @@ plt.legend()
 plt.show()
 ```
 
+![output_19_0](https://github.com/user-attachments/assets/8b539c08-aca1-4d2a-aa19-188edfd1f8ab)
 
 ```python
 fig = px.treemap(df3, path=['sex','country'], values='height_cm',
@@ -162,10 +173,15 @@ fig = px.treemap(df3, path=['sex','country'], values='height_cm',
 fig.show()
 ```
 
+![0400ae17-6fdf-4e38-a0c8-2ce6cdb432b5](https://github.com/user-attachments/assets/0d33a333-824a-42f7-a15f-6c3c6de63183)
+
+
 ## 6. 관계 시각화
 - 산점도를 그릴 때는 극단치를 제거하고 그리는 것이 좋다. => 시각화의 효율이 떨어진다.
 - 각각의 점에 투명도를 주어 점들의 밀도를 함께 표현 가능
 - 값의 구간을 나누어 빈도에 따른 농도나 색상을 다르게 표현 가능
+
+![555](https://github.com/user-attachments/assets/84d2858c-1b81-4f0e-9da0-b7b1e59f6be8)
 
 ## 7. 공간 시각화
 -데이터가 지리적 위치와 관련되어 있는 경우, 실제 지도 위에 데이터를 표현
@@ -176,6 +192,8 @@ fig.show()
 > 3. 코로플레스맵 or 링크맵 : 지도에 찍힌 점들을 곡선 or 직선으로 연결하여 지리적 관계를 표현 & 연속적인 연결을 통해 지도에 경로를 표현 가능
 > 4. 시작점과 도착점이 함께 표현되는 커넥션 맵인 플로우맵
 > 5. 각 지역의 면적을 데이터 값에 비레하도록 변형시켜 시각화하는 카토그램
+
+![df95a5a4-d1aa-4ba4-a0be-372e94cfa040](https://github.com/user-attachments/assets/48dd4b6d-4a9c-41c4-93f4-ebac7d0d1d29)
 
 
 ## 8. 박스 플롯
@@ -190,7 +208,7 @@ fig.show()
 - 중앙값 (Median): 데이터의 중앙값.
 - 이상치 (Outliers): 최솟값과 최댓값 범위를 벗어나는 값. => 작은 원으로 표현
 
-
+![image](https://github.com/user-attachments/assets/c7d03274-b1f2-4e57-95ef-08de02445599)
 
 
 >- 박스 플롯(Box Plot)에서 말하는 "최솟값"은 원본 데이터의 최솟값과는 다릅니다. 박스 플롯의 최솟값과 최댓값은 이상치를 제외한 범위를 나타내기 위해 계산된 값입니다. 여기서 IQR(Interquartile Range, 사분위 범위)을 사용하여 이상치를 결정합니다.
@@ -225,6 +243,7 @@ axs[1].set_title('Right-Skewed Data')
 plt.show()
 ```
 
+![output_28_0](https://github.com/user-attachments/assets/a6472eb4-82a4-4c1e-9cea-53d5fa6e24a6)
 
 ```python
 import matplotlib.pyplot as plt
@@ -251,3 +270,4 @@ plt.tight_layout()
 plt.show()
 # 왼쪽으로 치우친 데이터 / 오른쪽으로 치우친 데이터
 ```
+![output_29_0](https://github.com/user-attachments/assets/ba1542e6-2a8a-49e6-bcde-cd2dba99c8e9)
