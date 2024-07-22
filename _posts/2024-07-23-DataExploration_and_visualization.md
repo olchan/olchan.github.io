@@ -1,3 +1,16 @@
+---
+layout: post
+title: "[데이터 분석가가 반드시 알아야할 모든 것] 데이터 탐색과 시각화"
+published: true
+date: 2024-07-23
+math: true
+categories: 
+    - Study
+    - Data Science
+tags: KHUDA ML
+---
+
+
 > - EDA(Exploratory Data Analysis 탐색적 데이터 분석)와 데이터 시각화의 목적은 조금 다르다.
 - EDA 단계에서 데이터 파악을 효율적으로 하기 위해 시각화를 하기도 하지만, 데이터 시각화의 궁극적인 목적은 분석 결과를 커뮤니케이션 하기 위함이다.
 
