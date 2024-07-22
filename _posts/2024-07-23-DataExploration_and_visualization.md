@@ -55,7 +55,7 @@ df.describe()
   
 - 공분산 행렬 : $\Sigma = \frac{1}{n-1} \mathbf{X}_\text{centered}^T \mathbf{X}_\text{centered}$
   
-- $Sigma_{ij} = \frac{1}{n-1} \sum_{k=1}^{n} (X_{ki} - \bar{X}_i)(X_{kj} - \bar{X}_j)$
+- $\Sigma_{ij} = \frac{1}{n-1} \sum_{k=1}^{n} (X_{ki} - \bar{X}_i)(X_{kj} - \bar{X}_j)$
 
 >- 두 변수가 같은 방향으로 변할 때 (함께 증가하거나 함께 감소할 때): 공분산 값은 양수(+)가 됩니다. -> 두 변수 사이에 양의 관계가 있음을 의미
 - 두 변수가 반대 방향으로 변할 때 (하나는 증가하고 다른 하나는 감소할 때) : 공분산 값은 음수(-)가 됩니다. -> 두 변수 사이에 음의 관계가 있음을 의미
