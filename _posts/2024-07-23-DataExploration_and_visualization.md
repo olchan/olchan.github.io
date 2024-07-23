@@ -67,9 +67,11 @@ df.describe()
 - 공분산 계산식 : $Cov(X,Y)=E[(X−E[X])(Y−E[Y])]$
   
 - 공분산 행렬 :
+
  ```math
 \Sigma = \frac{1}{n-1} \mathbf{X}_\text{centered}^T \mathbf{X}_\text{centered}
  ```
+
  ```math
  \Sigma_{ij} = \frac{1}{n-1} \sum_{k=1}^{n} (X_{ki} - \bar{X}_i)(X_{kj} - \bar{X}_j)
  ```
