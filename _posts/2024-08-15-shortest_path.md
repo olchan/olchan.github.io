@@ -1,0 +1,491 @@
+---
+title: "[이것이 취업을 위한 코딩 테스트다] 최단 경로(Shortest Path)"
+category: Algorithm Theory
+use_math: true
+---
+
+# 1. 최단 경로(Shortest Path) 알고리즘
+- 특정 지점까지 가장 빠르게 도달하는 방법을 찾는 알고리즘(= 길 찾기 문제)
+- 그래프(노드, 간선)를 이용하여 표현
+- 출제 유형
+  - **다익스트라 최단 경로 알고리즘**, **플로이드 워셜 알고리즘**, 벨만 포드 알고리즘
+  - 실제 문제에서는 **특정 노드에서 다른 특정 노드까지의 최단 거리를 출력**하도록 요청하는 편이다.
+
+<br>
+
+# 2. 종류
+
+## 1) 다익스트라(Dijkstra) 최단 경로 알고리즘
+- 그래프에서 여러 개의 노드가 있을 때, 특정한 노드에서 출발하여 **다른 노드로 가는 '각각의' 최단 경로**를 구하는 알고리즘 
+- **'음의 간선'이 없을 때 정상적으로 동작**
+    - 음의 간선 : 0보다 작은 값을 가지는 간선
+- GPS 소프트웨어의 기본 알고리즘으로 사용됨
+- 가장 비용이 적은 노드를 선택해서 과정을 반복하기 때문에 그리디 알고리즘으로 분류됨
+
+<br>
+
+### 다익스트라 알고리즘의 원리
+
+1. 출발 노드 설정
+2. 최단 거리 테이블 초기화
+   - 출발 노드 까지의 거리는 0으로 초기화
+   - 나머지 노드 까지의 거리는 int(1e9)와 같은 무한으로 초기화
+3. **방문하지 않은 노드 중에서 최단 거리가 가장 짧은 노드를 선택(순차 탐색)**
+4. **해당 노드를 거쳐 다른 노드로 가는 비용을 계산하여 최단 거리 테이블을 갱신(그리디 알고리즘의 성격)**
+5. 3, 4 번 반복
+
+<br>
+
+### 특징
+- 최단 경로를 구할 때 '각 노드에 대한 현재까지의 최단 거리' 정보를 항상 1차원 리스트(= 최단 거리 테이블)에 저장하며 리스트를 지속적으로 갱신
+    - 매번 처리하고 있는 노드를 기준으로 주변 간선을 확인
+    - 현재 처리하고 있는 노드와 인접 노드로 도달하는 더 짧은 경로를 찾으면, 그 경로를 가장 짧은 경로로 판단함
+- 한 단계당 하나의 노드에 대해서만 최단 거리를 확실하게 찾는다.
+
+<br>
+
+### 구현 방법
+
+#### (1) 간단한 다익스트라 알고리즘 
+- 알고리즘을 그대로 구현하는 방법
+- **구현하기 쉽지만 느리게 동작함**
+- 시간 복잡도 : $O(V^2), V = 노드 개수$
+- 리스트를 사용하여 구현함
+    - 각 노드에 대한 최단 거리를 담는 1차원 리스트 선언
+    - 단계마다 '방문하지 않은 노드 중 최단 거리가 가장 짧은 노드를 선택'하기 위해 단계마다 1차원 리스트의 모든 원소를 확인(순차 탐색)
+- 입력 데이터의 수가 많아지므로 `sys.std.readline()`을 사용한다.
+- **$V \le 5,000$ 에서만 적용 가능** (파이썬은 1초당 약 2천만번의 연산)
+
+#### 예
+
+<br>
+
+![Dijkstra](/assets/images/posts/algorithm/this_is_coding_test/dijkstra.jpg)
+
+```python
+import sys
+
+input = sys.stdin.readline
+INF = int(1e9)
+
+n, m = map(int, input().split()) 
+# 6, 11 (노드 개수, 간선)
+
+start = int(input()) 
+# 1 (시작 노드)
+
+graph = [[] for i in range(n+1)] # 노드 정보 리스트 생성
+
+visited = [False] * (n + 1) # 방문 체크 리스트 생성
+
+distance = [INF] * (n + 1) # 최단 거리 테이블 무한 초기화
+
+for _ in range(m):
+    a, b, c = map(int, input().split()) # a 노드에서 b 노드로 가는 비용 : c
+    # 1 2 2
+    # 1 3 5
+    # 1 4 1
+    # 2 3 3
+    # 2 4 2
+    # 3 2 3
+    # 3 6 5
+    # 4 3 3
+    # 4 5 1
+    # 5 3 1
+    # 5 6 2
+    graph[a].append((b, c))
+
+# 방문하지 않은 노드 중에서, 가장 최단 거리가 짧은 노드의 번호 반환
+def get_smallest_node():
+    min_value = INF
+    index = 0 # 가장 최단 거리가 짧은 노드(인덱스)
+    for i in range(1, n+1):
+        if distance[i] < min_value and not visited[i]:
+            min_value = distance[i]
+            index = i
+    return index
+
+def dijkstra(start):
+    distance[start] = 0 # 시작 노드 초기화
+    visited[start] = True
+    for j in graph[start]:
+        distance[j[0]] = j[1]
+    for i in range(n-1): # 시작 노드를 제외한 전체 n-1개의 노드에 대해 반복
+        now = get_smallest_node() # 현재 가장 짧은 노드를 꺼내 방문 처리
+        visited[now] = True
+
+        for j in graph[now]:
+            cost = distance[now] + j[1]
+            if cost < distance[j[0]]: # 현재 노드를 거쳐서 다른 노드로 이동한 거리가 더 짧은 경우(갱신)
+                distance[j[0]] = cost
+
+# 다익스트라 알고리즘 수행
+dijkstra(start)
+
+# 모든 노드로 가기 위한 최단 거리 출력
+for i in range(1, n+1):
+    if distance[i] == INF: # 도달 불가능한 경우
+        print("INFINITY")
+    else: # 도달 가능한 경우
+        print(distance[i])
+# 0
+# 2
+# 3
+# 1
+# 2
+# 4
+```
+
+<br>
+
+#### (2) 개선된 다익스트라 알고리즘
+- 최단 거리가 가장 짧은 노드를 기존 방법보다 더 빠르게 찾는 방법
+- **현재 가까운 노드를 저장하기 위한 목적으로만 우선순위 큐를 사용(최소 힙 기준)**
+- **구현하기 까다롭지만 빠르게 동작함**
+- 시간 복잡도 : $O(ElogV), V = 노드 개수, E = 간선 개수$
+- 힙(Heap) 자료구조를 사용하여 구현함(현재 가장 가까운 노드 저장)
+
+##### 힙(Heap)
+- 우선순위 큐를 구현하기 위해 사용하는 자료구조
+
+##### 우선순위 큐(Priority Queue)
+- 우선순위가 가장 높은 데이터를 가장 먼저 삭제
+- 라이브러리 : **heapq(더 빠름)**, PriorityQueue
+- 데이터를 '(가치 = 우선순위, 물건)' 형태로 묶어서 우선순위 큐 자료구조에 넣음
+- 내부적으로 **최소 힙** 또는 **최대 힙**을 기반으로 구현
+    - **최소 힙**
+      - 값이 낮은 데이터가 먼저 삭제됨
+      - 파이썬의 우선순위 큐 라이브러리는 최소 힙을 기반으로 함
+    - 최대 힙
+      - 값이 큰 데이터가 먼저 삭제됨
+      - 최소힙에서 우선순위에 (-)를 붙였다가 우선순위 큐에서 꺼낸 다음 다시 (-)를 붙여 원래 값으로 돌리는 방식으로 구현 가능
+- 우선순위 큐는 리스트로 구현 가능 하나 큐로 구현하는 것이 더 빠르다.
+    - 데이터 개수가 N일 때, 데이터를 모두 넣고 다시 모두 꺼낸다면
+      - 리스트 : $N \times \Big( O(1) + O(N) \Big) => O(N^2)$
+      - 힙 : $N \times \Big( O(logN) + O(logN)  \Big) => O(NlogN)$
+
+##### 예
+
+<br>
+
+![](/assets/images/posts/algorithm/this_is_coding_test/dijkstra-improved.jpg)
+
+```python
+# 다익스트라 알고리즘(Dijkstra)
+
+# Heap을 이용한 방법 : 복잡 + 빠름
+import heapq
+import sys
+
+input = sys.stdin.readline
+INF = int(1e9)
+
+n, m = map(int, input().split()) 
+# 6, 11 (노드 개수, 간선)
+
+start = int(input()) 
+# 1 (시작 노드)
+
+graph = [[] for i in range(n+1)] # 노드 정보 리스트 생성
+
+visited = [False] * (n + 1) # 방문 체크 리스트 생성
+
+distance = [INF] * (n + 1) # 최단 거리 테이블 무한 초기화
+
+for _ in range(m):
+    a, b, c = map(int, input().split()) # a 노드에서 b 노드로 가는 비용 : c
+    # 1 2 2
+    # 1 3 5
+    # 1 4 1
+    # 2 3 3
+    # 2 4 2
+    # 3 2 3
+    # 3 6 5
+    # 4 3 3
+    # 4 5 1
+    # 5 3 1
+    # 5 6 2
+    graph[a].append((b, c))
+
+def dijkstra(start):
+    q = []
+    heapq.heappush(q, (0, start)) # 시작 노드로 가기 위한 최단 경로는 0으로 설정 후 큐 삽입
+    distance[start] = 0
+    while q: # 큐가 비어있지 않다면
+        dist, now = heapq.heappop(q) # 가장 최단 거리가 짧은 노드에 대한 정보 꺼내기
+        if distance[now] < dist: # 현재 노드가 이미 처리된 적 있다면 무시
+            continue
+        for i in graph[now]: # 현재 노드와 연결된 다른 인접 노드 확인
+            cost = dist + i[1]
+            if cost < distance[i[0]]: # 현재 노드를 거쳐서 다른 노드로 이동하는 거리가 더 짧은 경우
+                distance[i[0]] = cost
+                heapq.heappush(q, (cost, i[0]))
+
+# 다익스트라 알고리즘 수행
+dijkstra(start)
+
+# 모든 노드로 가기 위한 최단 거리 출력
+for i in range(1, n+1):
+    if distance[i] == INF: # 도달 불가능한 경우
+        print("INFINITY")
+    else: # 도달 가능한 경우
+        print(distance[i])
+# 0
+# 2
+# 3
+# 1
+# 2
+# 4
+```
+
+<br>
+
+## 2) 플로이드 워셜 알고리즘(Floyd-Warshall Algorithm)
+- **모든 지점에서 다른 모든 지점까지의 최단 경로를 구하는 알고리즘**
+- 단계마다 거쳐가는 노드를 기준으로 알고리즘을 수행함
+  - 다익스트라 알고리즘 처럼 매번 방문하지 않은 노드 중 최단 거리를 갖는 노드를 찾을 필요가 없음
+- 시간 복잡도 : $O(V^3), V = 노드 개수$
+
+#### 예 : 1번 노드에 대해 확인(노드 개수 : N)
+- 1번노드를 중간에 거쳐 지나가는 모든 경우를 고려하면 됨
+- A -> 1번 노드 -> B 로 가는 비용 확인 후 최단거리 갱신
+- $_{N-1} P_2$ 개의 쌍을 단계마다 반복해서 확인하면 됨
+
+#### 점화식
+- $D_{ab}\ =\ min(D_{ab},\ D_{ak}\ +\ D_{kb})$
+- 두 비용 중 더 작은 값으로 갱신
+    - $D_{ab}\ :\ A에서\ B로\ 가는\ 최소\ 비용(바로\ 이동하는\ 거리)$
+    - $D_{ak}+D_{kb}\ :\ A에서\ K를\ 거쳐\ B로\ 가는\ 비용(노드를\ 거쳐\ 이동하는\ 거리)$
+    
+<br>
+
+![](/assets/images/posts/algorithm/this_is_coding_test/floyd-warshall.jpg)
+
+<br>
+
+```python
+INF = int(1e9) # 10억
+
+n = int(input()) 
+# 4(노드 개수)
+
+m = int(input()) 
+# 7(간선 개수)
+
+graph = [[INF] * (n + 1) for _ in range(n + 1)] # 2차원 리스트 무한 값으로 생성
+
+# 자기 자신에서 자기 자신으로 가는 비용은 0으로 초기화
+for a in range(1, n + 1):
+    for b in range(1, n + 1):
+        if a == b:
+            graph[a][b] = 0
+
+# 각 간선에 대한 정보를 입력받아 그 값으로 초기화
+for _ in range(m):
+    a, b, c = map(int, input().split()) # a에서 b로 가는 비용 : c
+    graph[a][b] = c
+# 1 2 4
+# 1 4 6
+# 2 1 3
+# 2 3 7
+# 3 1 5
+# 3 4 4
+# 4 3 2
+    
+# 점화식에 따라 플로이드 워셜 알고리즘 수행
+for k in range(1, n + 1):
+    for a in range(1, n + 1):
+        for b in range(1, n + 1):
+            graph[a][b] = min(graph[a][b], graph[a][k] + graph[k][b])
+
+# 수행 결과
+for a in range(1, n + 1):
+    for b in range(1, n + 1):
+        if graph[a][b] == INF:
+            print("INFINITY", end= " ")
+        else:
+            print(graph[a][b], end=" ")
+    print()
+# 0 4 8 6
+# 3 0 7 9
+# 5 9 0 4
+# 7 11 2 0
+```
+
+<br>
+
+## 3) Dijkstra vs Floyd-Warshall
+
+||Dijkstra|Floyd-Warshall|
+|---|---|---|
+|사용 조건|한 지점에서 다른 특정 지점까지의 최단 경로를 구해야 하는 경우|모든 지점에서 다른 모든 지점까지의 최단경로를 모두 구해야 하는 경우|
+|동작 방식|1. 단계마다 최단 거리를 가지는 노드를 하나씩 반복적으로 선택<br> 2. 해당 노드를 거쳐가는 경로 확인<br> 3. 최단 거리 테이블 갱신|1. 단계마다 거쳐가는 노드를 기준으로 알고리즘 수행|
+|리스트|1차원 리스트에 최단거리 저장|2차원 리스트에 최단 거리 저장|
+|알고리즘 유형|그리디(Greedy)|다이나믹 프로그래밍(Dynamic Programming)|
+|시간 복잡도|$O(ElogV), V = 노드 개수, E = 간선 개수$|$O(V^3), V = 노드 개수$|
+
+<br>
+
+# 3. 실전 문제
+
+> 미래 도시
+
+방문 판매원 A는 많은 회사가 모여 있는 공중 미래 도시에 있다. 공중 미래 도시에는 1번부터 N번까지의 회사가 있는데 특정 회사끼리는 서로 도로를 통해 연결되어 있다.
+방문 판매원 A는 현재 1번 회사에 위치해 있으며, X번 회사에 방문해 물건을 판매하고자 한다. 
+
+공중 미래 도시에서 특정 회사에 도착하기 위한 방법은 회사끼리 연결되어 있는 도로를 이용하는 방법이 유일하다.
+또한 연결된 2개의 회사는 양방향으로 이동할 수 있다. 
+공중 미래 도시에서의 도로는 마하의 속도로 사람을 이동시켜주기 때문에 특정 회사와 다른 회사가 연결되어 있다면, 정확히 1만큼의 시간으로 이동할 수 있다.
+
+또한 오늘 방문 판매원 A는 기대하던 소개팅에도 참석하고자 한다. 소개팅의 상대는 K번 회사에 존재한다. 방문 판매원 A는 X번 회사에 가서 물건을 판매하기 전에 먼저 소개팅 상대의 회사에 찾아가서 함께 커피를 마실 예정이다.
+따라서 방문 판매원 A는 1번 회사에서 출발하여 K번 회사를 방문한 뒤에 X번 회사로 가는 것이 목표다.
+
+이때 방문 판매원 A는 가능한 한 빠르게 이동하고자 한다. 방문 판매원이 회사 사이를 이동하게 되는 최소 시간을 계산하는 프로그램을 작성하시오.
+
+이 때 소개팅의 상대방과 커피를 마시는 시간 등은 고려하지 않는다고 가정한다. 예를 들어 $N = 5,\ X = 4,\ K=5$이고 회사 간 도로가 7개면서 각 도로가 다음과 같이 연결되어 있을 때를 가정할 수 있다.
+
+(1, 2), (1, 3), (1, 4), (2, 4), (3, 4), (3, 5), (4, 5)
+
+이 때 방문 판매원 A가 최종적으로 4번 회사에 가는 경로를 (1번 - 3번 - 5번 - 4번)으로 설정하면, 소개팅에도 참석할 수 있으면서 총 3만큼의 시간으로 이동할 수 있다.
+따라서 이 경우 최소 이동시간은 3이다.
+
+- 시간 제한 : 1초
+- 메모리 제한 : 128MB
+- 입력 조건
+    - 첫째 줄에 전체 회사의 개수 N과 경로의 개수 M이 공백으로 구분되어 차례대로 주어진다($1 \le N,M \le 100$).
+    - 둘째 줄부터 $M+1$ 번째 줄에는 연결된 두 회사의 번호가 공백으로 구분되어 주어진다.
+    - $M+2$ 번째 줄에는 $X$와 $K$가 공백으로 구분되어 차례대로 주어진다($1 \le K \le 100$).
+
+-> 최단 경로를 구하는 문제이다. N이 100 이하 이므로($O(V^3) = n=100^3=1,000,000$) 플로이드 워셜 알고리즘으로 풀어도 1초 이내에 문제를 풀 수 있다. 
+
+![이것이 코딩테스트다 미래도시](/assets/images/posts/algorithm/this_is_coding_test/future_city.jpg)
+
+<br>
+
+```python
+INF = int(1e9) # 10억
+
+n, m = map(int, input().split()) 
+# 5, 7(노드 개수, 간선 개수)
+
+graph = [[INF] * (n + 1) for _ in range(n + 1)] # 2차원 리스트 무한 값으로 생성
+
+# 자기 자신에서 자기 자신으로 가는 비용은 0으로 초기화
+for a in range(1, n + 1):
+    for b in range(1, n + 1):
+        if a == b:
+            graph[a][b] = 0
+
+# 각 간선에 대한 정보를 입력받아 그 값으로 초기화
+for _ in range(m):
+    a, b = map(int, input().split()) 
+    graph[a][b] = 1 # a에서 b로 가는 비용 : 1로 고정
+    graph[b][a] = 1 # b에서 a로 가는 비용 : 1로 고정
+# 1 2
+# 1 3
+# 1 4
+# 2 4
+# 3 4
+# 3 5
+# 4 5
+
+# 거쳐갈 노드 K와 최종 목적지 노드 X 입력
+x, k = map(int, input().split())
+# 4 5
+
+# 점화식에 따라 플로이드 워셜 알고리즘 수행
+for k in range(1, n + 1):
+    for a in range(1, n + 1):
+        for b in range(1, n + 1):
+            graph[a][b] = min(graph[a][b], graph[a][k] + graph[k][b])
+
+# 수행 결과 출력
+distance = graph[1][k] + graph[k][x]
+
+
+if distance == INF:
+    print("-1")
+else:
+    print(distance)
+# 3
+```
+
+<br>
+
+> 전보
+
+어떤 나라에는 N개의 도시가 있다. 그리고 각 도시는 보내고자 하는 메시지가 있는 경우, 다른 도시로 전보를
+보내서 다른 도시로 해당 메시지를 전송할 수 있다.
+
+하지만 X라는 도시에서 Y라는 도시로 전보를 보내고자 한다면, 도시 X에서 Y로 향하는 통로가 설치되어 있어야 한다.
+예를 들어 X에서 Y로 향하는 통로는 있지만, Y에서 X로 향하는 통로가 없다면 Y는 X로 메시지를 보낼 수 없다
+또한 통로를 거쳐 메시지를 보낼 때는 일정 시간이 소요된다.
+
+어느 날 C라는 도시에서 위급 상황이 발생했다. 그래서 최대한 많은 도시로 메시지를 보내고자 한다.
+메시지는 도시 C에서 출발하여 각 도시 사이에 설치된 통로를 거쳐, 최대한 많이 퍼져나갈 것이다.
+
+각 도시의 번호와 통로가 설치되어 있는 정보가 주어졌을 때, 도시 C에서 보낸 메시지를 받게 되는 도시의 개수는
+총 몇 개이며 도시들이 모두 메시지를 받는 데 까지 걸리는 시간은 얼마인지 계산하는 프로그램을 작성하시오.
+
+- 시간 제한 : 1초
+- 메모리 제한 : 128MB
+- 입력 조건
+    - 첫째 줄에 도시의 개수 N, 통로의 개수 M, 메시지를 보내고자 하는 도시 C가 주어진다.<br>($1 \le N \le 30,000,\ \ 1 \le M \le 200,000,\ \ 1 \le C \le N$)
+    - 둘째 줄 부터 M+1 번째 줄에 걸쳐서 통로에 대한 정보 X, Y, Z가 주어진다. 이는 특정 도시 X에서 다른 특정 도시 Y로 이어지는 통로가 있으며, 메시지가 전달되는 시간이 Z라는 의미다.<br>($1 \le X,Y \le N,\ \ 1 \le Z \le 1,000$)
+
+-> N, M의 범위가 크므로 플로이드 워셜 알고리즘을 사용하면 $O(V^3) = 30000^3$이고 연산하는데 1,350,000 초가 걸린다. <br> 따라서 다익스트라 알고리즘으로 풀어야하는 문제이다. $O(MlogN) = 200,000 log 30,000 = 4,200,000$
+
+![이것이 코딩테스트다 전보](/assets/images/posts/algorithm/this_is_coding_test/junbo.png)
+
+<br>
+
+```python
+import heapq
+import sys
+
+input = sys.stdin.readline
+INF = int(1e9)
+
+n, m, start = map(int, input().split())
+# 3 2 1 (노드의 개수, 간선의 개수, 시작 노드)
+
+graph = [[] for i in range(n+1)] # 노드 연결 정보 리스트 생성
+
+distance = [INF] * (n+1) # 최단거리 테이블 초기화
+
+for _ in range(m):
+    x, y, z = map(int, input().split())    
+    # 1 2 4
+    # 1 3 2
+    
+    graph[x].append((y,z)) # x에서 y로 가는 비용 z
+    
+def dijkstra(start):
+    q = []
+    heapq.heappush(q, (0, start)) # 시작 노드로 가기 위한 최단 경로는 0으로 설정 후 큐 삽입
+    distance[start] = 0
+    
+    while q: # 큐가 비어있지 않다면
+        dist, now = heapq.heappop(q) # 가장 최단 거리가 짧은 노드에 대한 정보 꺼내기
+        if distance[now] < dist: # 현재 노드가 이미 처리된 적 있다면 무시
+            continue
+        for i in graph[now]: # 현재 노드와 연결된 다른 인접 노드 확인
+            cost = dist + i[1]
+            if cost < distance[i[0]]: # 현재 노드를 거쳐서 다른 노드로 이동하는 거리가 더 짧은 경우
+                distance[i[0]] = cost
+                heapq.heappush(q, (cost, i[0]))
+                
+dijkstra(start)
+
+count = 0 # 도달할 수 있는 노드의 개수
+
+max_distance = 0 # 도달할 수 있는 노드 중 가장 멀리 있는 노드와의 최단 거리
+
+for d in distance:
+    if d!= INF: # 도달할 수 없는 경우
+        count += 1
+        max_distance = max(max_distance, d)
+
+print(count - 1, max_distance)
+# 2 4 
+```
