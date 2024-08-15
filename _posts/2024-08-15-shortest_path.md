@@ -60,7 +60,6 @@ use_math: true
 
 <br>
 
-![Dijkstra](/assets/images/posts/algorithm/this_is_coding_test/dijkstra.jpg)
 
 ```python
 import sys
@@ -168,7 +167,6 @@ for i in range(1, n+1):
 
 <br>
 
-![](/assets/images/posts/algorithm/this_is_coding_test/dijkstra-improved.jpg)
 
 ```python
 # 다익스트라 알고리즘(Dijkstra)
@@ -259,7 +257,6 @@ for i in range(1, n+1):
     
 <br>
 
-![](/assets/images/posts/algorithm/this_is_coding_test/floyd-warshall.jpg)
 
 <br>
 
@@ -358,7 +355,6 @@ for a in range(1, n + 1):
 
 -> 최단 경로를 구하는 문제이다. N이 100 이하 이므로($O(V^3) = n=100^3=1,000,000$) 플로이드 워셜 알고리즘으로 풀어도 1초 이내에 문제를 풀 수 있다. 
 
-![이것이 코딩테스트다 미래도시](/assets/images/posts/algorithm/this_is_coding_test/future_city.jpg)
 
 <br>
 
@@ -435,7 +431,6 @@ else:
 
 -> N, M의 범위가 크므로 플로이드 워셜 알고리즘을 사용하면 $O(V^3) = 30000^3$이고 연산하는데 1,350,000 초가 걸린다. <br> 따라서 다익스트라 알고리즘으로 풀어야하는 문제이다. $O(MlogN) = 200,000 log 30,000 = 4,200,000$
 
-![이것이 코딩테스트다 전보](/assets/images/posts/algorithm/this_is_coding_test/junbo.png)
 
 <br>
 
